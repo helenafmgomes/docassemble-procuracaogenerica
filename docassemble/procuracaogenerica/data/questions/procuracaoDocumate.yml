@@ -1,0 +1,772 @@
+code: multi_user = True
+mandatory: True
+---
+metadata:
+  short title: Procuracao
+  title: Procuracao
+---
+features:
+  question back button: True
+---
+objects:
+  - O: DAList.using(object_type=DAObject)
+  - outorgados: DAList.using(object_type=DAObject)
+  - outorgantes: DAList.using(object_type=DAObject)
+  - representantes: DAList.using(object_type=DAObject)
+  - empresas: DAList.using(object_type=DAObject)
+  - outorgantes: DAList.using(object_type=DAObject)
+---
+modules:
+  - docassemble.base.util
+---
+continue button label: Save & Continue
+fields:
+  - note: 'Nesta seção você tem a opção de personalizar sua procuração com a logo da sua empresa. A questão é opcional, ou seja, não é de preenchimento obrigatório. Caso não queira inserir logo, basta clicar em "Save & Continue".'
+  - 'Deseja inserir uma imagem, um logo à procuração?': logo
+    datatype: file
+    help: 'Deseja inserir uma imagem, um logo à procuração?'
+    required: False
+question: Logo
+---
+code: outorgantes.complete_attribute = 'nome'
+mandatory: True
+---
+need:
+  - logo
+question: Deseja incluir outorgante pessoa física à procuração?
+yesno: outorgantes.there_are_any
+---
+continue button label: Save & Continue
+fields:
+  - Nome do outorgante: 'outorgantes[i].nome'
+    datatype: text
+  - Sexo: 'outorgantes[i].sexo'
+    choices:
+      - Feminino: Feminino
+      - Masculino: Masculino
+    datatype: radio
+  - Tipo de logradouro: 'outorgantes[i].tipologradouro'
+    choices:
+      - avenida: avenida
+      - rua: rua
+      - aeroporto: aeroporto
+      - alameda: alameda
+      - área: área
+      - campo: campo
+      - chácara: chácara
+      - colônia: colônia
+      - condomínio: condomínio
+      - conjunto: conjunto
+      - distrito: distrito
+      - esplanada: esplanada
+      - estação: estação
+      - estrada: estrada
+      - favela: favela
+      - fazenda: fazenda
+      - feira: feira
+      - jardim: jardim
+      - ladeira: ladeira
+      - lago: lago
+      - lagoa: lagoa
+      - largo: largo
+      - loteamento: loteamento
+      - morro: morro
+      - núcleo: núcleo
+      - parque: parque
+      - passarela: passarela
+      - pátio: pátio
+      - praça: praça
+      - quadra: quadra
+      - recanto: recanto
+      - residencial: residencial
+      - rodovia: rodovia
+      - setor: setor
+      - sítio: sítio
+      - travessa: travessa
+      - trecho: trecho
+      - trevo: trevo
+      - vale: vale
+      - vereda: vereda
+      - via: via
+      - viaduto: viaduto
+      - viela: viela
+      - vila: vila
+    datatype: dropdown
+  - Logradouro: 'outorgantes[i].logradouro'
+    datatype: text
+  - Número: 'outorgantes[i].numero'
+    datatype: text
+  - Complemento: 'outorgantes[i].complemento'
+    datatype: text
+  - Bairro: 'outorgantes[i].bairro'
+    datatype: text
+  - Município: 'outorgantes[i].municipio'
+    datatype: text
+  - Estado: 'outorgantes[i].estado'
+    choices:
+      - AC: AC
+      - AL: AL
+      - AP: AP
+      - AM: AM
+      - BA: BA
+      - CE: CE
+      - DF: DF
+      - ES: ES
+      - GO: GO
+      - MA: MA
+      - MT: MT
+      - MS: MS
+      - MG: MG
+      - PA: PA
+      - PB: PB
+      - PR: PR
+      - PE: PE
+      - PI: PI
+      - RJ: RJ
+      - RN: RN
+      - RS: RS
+      - RO: RO
+      - RR: RR
+      - SC: SC
+      - SP: SP
+      - SE: SE
+      - TO: TO
+    datatype: dropdown
+  - Qual a nacionalidade do outorgante?: 'outorgantes[i].nacionalidade'
+    choices:
+      - brasileiro(a): brasileiro(a)
+      - estrangeiro(a): estrangeiro(a)
+    datatype: radio
+  - Qual o estado civil do outorgante?: 'outorgantes[i].estadocivil'
+    choices:
+      - solteiro(a): solteiro(a)
+      - casado(a): casado(a)
+      - separado(a): separado(a)
+      - divorciado(a): divorciado(a)
+      - viúvo(a): viúvo(a)
+    datatype: radio
+  - Qual a profissão do outorgante?: 'outorgantes[i].profissao'
+    datatype: text
+  - CPF: 'outorgantes[i].cpf'
+    datatype: text
+  - Documento de identidade: 'outorgantes[i].documento'
+    datatype: text
+  - datatype: text
+    Órgão emissor: 'outorgantes[i].orgaoemissor'
+question: Dados do outorgante
+---
+question: Deseja incluir outro outorgante pessoa física à procuração?
+yesno: outorgantes.there_is_another
+---
+event: 'outorgantes[i].review'
+question: Edit your entry
+review:
+  - Nome do outorgante: 'outorgantes[i].nome'
+    button: '**Nome do outorgante**: ${ outorgantes[i].nome }'
+  - Sexo: 'outorgantes[i].sexo'
+    button: '**Sexo**: ${ outorgantes[i].sexo }'
+  - Tipo de logradouro: 'outorgantes[i].tipologradouro'
+    button: '**Tipo de logradouro**: ${ outorgantes[i].tipologradouro }'
+  - Logradouro: 'outorgantes[i].logradouro'
+    button: '**Logradouro**: ${ outorgantes[i].logradouro }'
+  - Número: 'outorgantes[i].numero'
+    button: '**Número**: ${ outorgantes[i].numero }'
+---
+code: outorgantes.remove(value(action_argument('item')))
+event: outorgantes_del
+---
+code: |-
+  outorgantes.appendObject()
+  outorgantes.reset_gathered()
+  outorgantes.there_is_another = False
+event: outorgantes_add
+---
+columns:
+  - Nome do outorgante: row_item.nome
+  - Sexo: row_item.sexo
+  - Tipo de logradouro: row_item.tipologradouro
+  - Logradouro: row_item.logradouro
+  - Número: row_item.numero
+edit:
+  - nome
+  - sexo
+  - tipologradouro
+  - logradouro
+  - numero
+rows: outorgantes
+table: outorgantes_table
+---
+buttons:
+  Save & Continue: continue
+field: hsl_field_1708403966
+mandatory: True
+question: Please review your entries
+subquestion: |-
+  ${ outorgantes_table }
+  ${ outorgantes.add_action() }
+---
+code: empresas.complete_attribute = 'razaosocial'
+mandatory: True
+---
+need:
+  - logo
+question: Deseja incluir outorgante pessoa jurídica à procuração?
+yesno: empresas.there_are_any
+---
+continue button label: Save & Continue
+fields:
+  - Razão social: 'empresas[i].razaosocial'
+    datatype: text
+  - Tipo de logradouro: 'empresas[i].tipologradouro'
+    choices:
+      - avenida: avenida
+      - rua: rua
+      - aeroporto: aeroporto
+      - alameda: alameda
+      - área: área
+      - campo: campo
+      - chácara: chácara
+      - colônia: colônia
+      - condomínio: condomínio
+      - conjunto: conjunto
+      - distrito: distrito
+      - esplanada: esplanada
+      - estação: estação
+      - estrada: estrada
+      - favela: favela
+      - fazenda: fazenda
+      - feira: feira
+      - jardim: jardim
+      - ladeira: ladeira
+      - lago: lago
+      - lagoa: lagoa
+      - largo: largo
+      - loteamento: loteamento
+      - morro: morro
+      - núcleo: núcleo
+      - parque: parque
+      - passarela: passarela
+      - pátio: pátio
+      - praça: praça
+      - quadra: quadra
+      - recanto: recanto
+      - residencial: residencial
+      - rodovia: rodovia
+      - setor: setor
+      - sítio: sítio
+      - travessa: travessa
+      - trecho: trecho
+      - trevo: trevo
+      - vale: vale
+      - vereda: vereda
+      - via: via
+      - viaduto: viaduto
+      - viela: viela
+      - vila: vila
+    datatype: dropdown
+  - Logradouro: 'empresas[i].logradouro'
+    datatype: text
+  - Número: 'empresas[i].numero'
+    datatype: text
+  - Complemento: 'empresas[i].complemento'
+    datatype: text
+  - Bairro: 'empresas[i].bairro'
+    datatype: text
+  - Município: 'empresas[i].municipio'
+    datatype: text
+  - Estado: 'empresas[i].estado'
+    choices:
+      - AC: AC
+      - AL: AL
+      - AP: AP
+      - AM: AM
+      - BA: BA
+      - CE: CE
+      - DF: DF
+      - ES: ES
+      - GO: GO
+      - MA: MA
+      - MT: MT
+      - MS: MS
+      - MG: MG
+      - PA: PA
+      - PB: PB
+      - PR: PR
+      - PE: PE
+      - PI: PI
+      - RJ: RJ
+      - RN: RN
+      - RS: RS
+      - RO: RO
+      - RR: RR
+      - SC: SC
+      - SP: SP
+      - SE: SE
+      - TO: TO
+    datatype: dropdown
+  - CNPJ: 'empresas[i].cnpj'
+    datatype: text
+  - 'Qual é o tipo de ato constitutivo da empresa outorgante? ': 'empresas[i].atoconstitutivo'
+    choices:
+      - Estatuto Social: Estatuto Social
+      - Contrato Social: Contrato Social
+    datatype: radio
+  - Em qual artigo do ato constitutivo da empresa outorgante está definido seu representante?: 'empresas[i].artigo'
+    datatype: text
+question: Outorgante - Pessoa Jurídica
+---
+question: Deseja incluir outro outorgante pessoa jurídica à procuração?
+yesno: empresas.there_is_another
+---
+event: 'empresas[i].review'
+question: Edit your entry
+review:
+  - Razão social: 'empresas[i].razaosocial'
+    button: '**Razão social**: ${ empresas[i].razaosocial }'
+  - Tipo de logradouro: 'empresas[i].tipologradouro'
+    button: '**Tipo de logradouro**: ${ empresas[i].tipologradouro }'
+  - Logradouro: 'empresas[i].logradouro'
+    button: '**Logradouro**: ${ empresas[i].logradouro }'
+  - Número: 'empresas[i].numero'
+    button: '**Número**: ${ empresas[i].numero }'
+  - Complemento: 'empresas[i].complemento'
+    button: '**Complemento**: ${ empresas[i].complemento }'
+---
+code: empresas.remove(value(action_argument('item')))
+event: empresas_del
+---
+code: |-
+  empresas.appendObject()
+  empresas.reset_gathered()
+  empresas.there_is_another = False
+event: empresas_add
+---
+columns:
+  - Razão social: row_item.razaosocial
+  - Tipo de logradouro: row_item.tipologradouro
+  - Logradouro: row_item.logradouro
+  - Número: row_item.numero
+  - Complemento: row_item.complemento
+edit:
+  - razaosocial
+  - tipologradouro
+  - logradouro
+  - numero
+  - complemento
+rows: empresas
+table: empresas_table
+---
+buttons:
+  Save & Continue: continue
+field: hsl_field_6313129820
+mandatory: True
+question: Please review your entries
+subquestion: |-
+  ${ empresas_table }
+  ${ empresas.add_action() }
+---
+code: representantes.complete_attribute = 'nome'
+mandatory: True
+---
+need:
+  - logo
+question: Deseja incluir o(s) representante(s) da empresa outorgante à procuração?
+yesno: representantes.there_are_any
+---
+continue button label: Save & Continue
+fields:
+  - 'Qual o nome do representante da empresa outorgante? ': 'representantes[i].nome'
+    datatype: text
+  - Sexo: 'representantes[i].sexo'
+    choices:
+      - Feminino: Feminino
+      - Masculino: Masculino
+    datatype: radio
+  - Nacionalidade: 'representantes[i].nacionalidade'
+    choices:
+      - brasileiro(a): brasileiro(a)
+      - estrangeiro(a): estrangeiro(a)
+    datatype: radio
+  - Qual o estado civil do representante?: 'representantes[i].estadocivil'
+    choices:
+      - solteiro(a): solteiro(a)
+      - casado(a): casado(a)
+      - separado(a): separado(a)
+      - divorciado(a): divorciado(a)
+      - viúvo(a): viúvo(a)
+    datatype: radio
+  - Profissão: 'representantes[i].profissao'
+    datatype: text
+  - CPF: 'representantes[i].cpf'
+    datatype: text
+  - Documento de identidade: 'representantes[i].documento'
+    datatype: text
+  - datatype: text
+    Órgão emissor do documento de identidade: 'representantes[i].orgaoemissor'
+  - Município: 'representantes[i].municipio'
+    datatype: text
+  - Estado: 'representantes[i].estado'
+    choices:
+      - AC: AC
+      - AL: AL
+      - AP: AP
+      - AM: AM
+      - BA: BA
+      - CE: CE
+      - DF: DF
+      - ES: ES
+      - GO: GO
+      - MA: MA
+      - MT: MT
+      - MS: MS
+      - MG: MG
+      - PA: PA
+      - PB: PB
+      - PR: PR
+      - PE: PE
+      - PI: PI
+      - RJ: RJ
+      - RN: RN
+      - RS: RS
+      - RO: RO
+      - RR: RR
+      - SC: SC
+      - SP: SP
+      - SE: SE
+      - TO: TO
+    datatype: dropdown
+question: Representante da empresa outorgante
+---
+question: Deseja incluir outro representante?
+yesno: representantes.there_is_another
+---
+event: 'representantes[i].review'
+question: Edit your entry
+review:
+  - 'Qual o nome do representante da empresa outorgante? ': 'representantes[i].nome'
+    button: '**Qual o nome do representante da empresa outorgante? **: ${ representantes[i].nome }'
+  - Sexo: 'representantes[i].sexo'
+    button: '**Sexo**: ${ representantes[i].sexo }'
+  - Nacionalidade: 'representantes[i].nacionalidade'
+    button: '**Nacionalidade**: ${ representantes[i].nacionalidade }'
+  - Qual o estado civil do representante?: 'representantes[i].estadocivil'
+    button: '**Qual o estado civil do representante?**: ${ representantes[i].estadocivil }'
+  - Profissão: 'representantes[i].profissao'
+    button: '**Profissão**: ${ representantes[i].profissao }'
+---
+code: representantes.remove(value(action_argument('item')))
+event: representantes_del
+---
+code: |-
+  representantes.appendObject()
+  representantes.reset_gathered()
+  representantes.there_is_another = False
+event: representantes_add
+---
+columns:
+  - 'Qual o nome do representante da empresa outorgante? ': row_item.nome
+  - Sexo: row_item.sexo
+  - Nacionalidade: row_item.nacionalidade
+  - Qual o estado civil do representante?: row_item.estadocivil
+  - Profissão: row_item.profissao
+edit:
+  - nome
+  - sexo
+  - nacionalidade
+  - estadocivil
+  - profissao
+rows: representantes
+table: representantes_table
+---
+buttons:
+  Save & Continue: continue
+field: hsl_field_6718105235
+mandatory: True
+question: Please review your entries
+subquestion: |-
+  ${ representantes_table }
+  ${ representantes.add_action() }
+---
+code: outorgados.complete_attribute = 'nomeoutorgado'
+mandatory: True
+---
+need:
+  - logo
+question: Deseja incluir outorgados à procuração?
+yesno: outorgados.there_are_any
+---
+continue button label: Save & Continue
+fields:
+  - Nome do outorgado: 'outorgados[i].nomeoutorgado'
+    datatype: text
+  - Sexo: 'outorgados[i].sexo'
+    choices:
+      - Feminino: Feminino
+      - Masculino: Masculino
+    datatype: radio
+  - Nacionalidade: 'outorgados[i].nacionalidadeoutorgado'
+    choices:
+      - brasileiro(a): brasileiro(a)
+      - estrangeiro(a): estrangeiro(a)
+    datatype: radio
+  - Qual o estado civil do outorgado?: 'outorgados[i].estadociviloutorgado'
+    choices:
+      - solteiro(a): solteiro(a)
+      - casado(a): casado(a)
+      - separado(a): separado(a)
+      - divorciado(a): divorciado(a)
+      - viúvo(a): viúvo(a)
+    datatype: radio
+  - Qual a profissão do outorgado?: 'outorgados[i].profissaooutorgado'
+    datatype: text
+  - Qual o CPF do outorgado?: 'outorgados[i].cpfoutorgado'
+    datatype: text
+  - Qual é a identidade do outorgado?: 'outorgados[i].documentooutorgado'
+    datatype: text
+  - Qual é o órgão emissor da identidade do outorgado?: 'outorgados[i].orgaoemissoroutorgado'
+    datatype: text
+  - Qual o tipo de logradouro do endereço do outorgado?: 'outorgados[i].tipologradourooutorgado'
+    choices:
+      - avenida: avenida
+      - rua: rua
+      - aeroporto: aeroporto
+      - alameda: alameda
+      - área: área
+      - campo: campo
+      - chácara: chácara
+      - colônia: colônia
+      - condomínio: condomínio
+      - conjunto: conjunto
+      - distrito: distrito
+      - esplanada: esplanada
+      - estação: estação
+      - estrada: estrada
+      - favela: favela
+      - fazenda: fazenda
+      - feira: feira
+      - jardim: jardim
+      - ladeira: ladeira
+      - lago: lago
+      - lagoa: lagoa
+      - largo: largo
+      - loteamento: loteamento
+      - morro: morro
+      - núcleo: núcleo
+      - parque: parque
+      - passarela: passarela
+      - pátio: pátio
+      - praça: praça
+      - quadra: quadra
+      - recanto: recanto
+      - residencial: residencial
+      - rodovia: rodovia
+      - setor: setor
+      - sítio: sítio
+      - travessa: travessa
+      - trecho: trecho
+      - trevo: trevo
+      - vale: vale
+      - vereda: vereda
+      - via: via
+      - viaduto: viaduto
+      - viela: viela
+      - vila: vila
+    datatype: dropdown
+  - Logradouro: 'outorgados[i].logradourooutorgado'
+    datatype: text
+  - Número do logradouro: 'outorgados[i].numerooutorgado'
+    datatype: text
+  - Complemento do endereço: 'outorgados[i].complementooutorgado'
+    datatype: text
+  - Bairro: 'outorgados[i].bairrooutorgado'
+    datatype: text
+  - Município: 'outorgados[i].municipiooutorgado'
+    datatype: text
+  - Estado: 'outorgados[i].estadooutorgado'
+    choices:
+      - AC: AC
+      - AL: AL
+      - AP: AP
+      - AM: AM
+      - BA: BA
+      - CE: CE
+      - DF: DF
+      - ES: ES
+      - GO: GO
+      - MA: MA
+      - MT: MT
+      - MS: MS
+      - MG: MG
+      - PA: PA
+      - PB: PB
+      - PR: PR
+      - PE: PE
+      - PI: PI
+      - RJ: RJ
+      - RN: RN
+      - RS: RS
+      - RO: RO
+      - RR: RR
+      - SC: SC
+      - SP: SP
+      - SE: SE
+      - TO: TO
+    datatype: dropdown
+question: Outorgados
+---
+question: Deseja incluir outro outorgado?
+yesno: outorgados.there_is_another
+---
+event: 'outorgados[i].review'
+question: Edit your entry
+review:
+  - Nome do outorgado: 'outorgados[i].nomeoutorgado'
+    button: '**Nome do outorgado**: ${ outorgados[i].nomeoutorgado }'
+  - Sexo: 'outorgados[i].sexo'
+    button: '**Sexo**: ${ outorgados[i].sexo }'
+  - Nacionalidade: 'outorgados[i].nacionalidadeoutorgado'
+    button: '**Nacionalidade**: ${ outorgados[i].nacionalidadeoutorgado }'
+  - Qual o estado civil do outorgado?: 'outorgados[i].estadociviloutorgado'
+    button: '**Qual o estado civil do outorgado?**: ${ outorgados[i].estadociviloutorgado }'
+  - Qual a profissão do outorgado?: 'outorgados[i].profissaooutorgado'
+    button: '**Qual a profissão do outorgado?**: ${ outorgados[i].profissaooutorgado }'
+---
+code: outorgados.remove(value(action_argument('item')))
+event: outorgados_del
+---
+code: |-
+  outorgados.appendObject()
+  outorgados.reset_gathered()
+  outorgados.there_is_another = False
+event: outorgados_add
+---
+columns:
+  - Nome do outorgado: row_item.nomeoutorgado
+  - Sexo: row_item.sexo
+  - Nacionalidade: row_item.nacionalidadeoutorgado
+  - Qual o estado civil do outorgado?: row_item.estadociviloutorgado
+  - Qual a profissão do outorgado?: row_item.profissaooutorgado
+edit:
+  - nomeoutorgado
+  - sexo
+  - nacionalidadeoutorgado
+  - estadociviloutorgado
+  - profissaooutorgado
+rows: outorgados
+table: outorgados_table
+---
+buttons:
+  Save & Continue: continue
+field: hsl_field_8128331724
+mandatory: True
+question: Please review your entries
+subquestion: |-
+  ${ outorgados_table }
+  ${ outorgados.add_action() }
+---
+continue button label: Save & Continue
+fields:
+  - note: |-
+      Informe a seguir com qual objetivo você deseja conceder poderes ao outorgado. 
+      Por exemplo: gestão de obras de implantação do Sistema de Utilidades do Píer IV na MINERA S/A, situado no Terminal Marítimo de Puerto Madero, em Buenos Aires/Argentina; administração do fundo de investimentos LegalSchool; entre outros.
+  - Com qual finalidade estão sendo concedidos poderes ao outorgado?: finalidade
+    datatype: text
+    help: 'Ex: gestão de obras do Puerto Madero, administração de fundo de investimento LegalSchool,'
+  - Selecione os tipos de instituições em que o outorgado pode representar o outorgante.: orgaosgerais
+    choices:
+      - em qualquer instituição pública ou privada: em qualquer instituição pública ou privada
+      - em órgãos específicos: em órgãos específicos
+      - em empresa específica: em empresa específica
+    datatype: checkboxes
+    help: ''
+    none of the above: false
+  - 'Nome(s) do(s) órgão(s) específico(s) em que o outorgado pode representar o outorgante. ': orgaoespecifico
+    datatype: text
+    required: False
+  - 'Nome(s) da(s) empresa(s) específica(s) em que o outorgado pode representar o outorgante. ': empresaespecifica
+    datatype: text
+    required: False
+  - Tipos de poder: tipospoder
+    choices:
+      - poderes gerais: poderes gerais
+      - poderes DP: poderes DP
+      - poderes contábeis: poderes contábeis
+      - poderes administrativo-financeiros: poderes administrativo-financeiros
+      - poderes vedados: poderes vedados
+    datatype: checkboxes
+    none of the above: false
+need:
+  - logo
+question: Poderes da procuração
+---
+continue button label: Save & Continue
+fields:
+  - Prazo de validade: validade
+    datatype: integer
+    help: ''
+  - Unidade de tempo de validade: tempo
+    choices:
+      - dia(s): dia(s)
+      - mês(es): mês(es)
+      - ano(s): ano(s)
+    datatype: dropdown
+    help: ''
+  - Informe o município para assinatura da procuração: municipio
+    datatype: text
+    help: 'Belo Horzonte, 20 de setembro de 2019.'
+  - Data de assinatura da procuração: data
+    datatype: date
+need:
+  - finalidade
+  - orgaosgerais
+  - orgaoespecifico
+  - empresaespecifica
+  - tipospoder
+question: Data
+---
+field: review_answers
+mandatory: True
+need:
+  - validade
+  - tempo
+  - municipio
+  - data
+question: Please review your answers below. Click the green bubble on the right to change your prior answers.
+review:
+  - note: '####Logo'
+  - Change Answer: logo
+    button: '**Deseja inserir uma imagem, um logo à procuração?**: ${ logo }'
+  - note: '####Poderes da procuração'
+  - Change Answer: finalidade
+    button: '**Com qual finalidade estão sendo concedidos poderes ao outorgado?**: ${ finalidade }'
+  - Change Answer: orgaosgerais
+    button: '**Selecione os tipos de instituições em que o outorgado pode representar o outorgante.**: ${ orgaosgerais.true_values() }'
+  - Change Answer: orgaoespecifico
+    button: '**Nome(s) do(s) órgão(s) específico(s) em que o outorgado pode representar o outorgante. **: ${ orgaoespecifico }'
+  - Change Answer: empresaespecifica
+    button: '**Nome(s) da(s) empresa(s) específica(s) em que o outorgado pode representar o outorgante. **: ${ empresaespecifica }'
+  - Change Answer: tipospoder
+    button: '**Tipos de poder**: ${ tipospoder.true_values() }'
+  - note: '####Data'
+  - Change Answer: validade
+    button: '**Prazo de validade**: ${ validade }'
+  - Change Answer: tempo
+    button: '**Unidade de tempo de validade**: ${ tempo }'
+  - Change Answer: municipio
+    button: '**Informe o município para assinatura da procuração**: ${ municipio }'
+  - Change Answer: data
+    button: '**Data de assinatura da procuração**: ${ data }'
+---
+attachment:
+  docx template file: procuracao.docx
+  filename: procuracao
+  name: procuracao
+  variable name: procuracao
+---
+code: |
+  #hslPreAttachment
+---
+allow downloading: True
+attachment code: '[procuracao]'
+mandatory: True
+question: Here are your documents!
